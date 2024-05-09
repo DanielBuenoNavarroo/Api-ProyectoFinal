@@ -18,6 +18,7 @@ export const register = async (req, res) => {
       id: userSaved._id,
       username: userSaved.username,
       email: userSaved.email,
+      token: token,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -30,11 +31,14 @@ export const login = async (req, res) => {
   try {
     const userFound = await User.findOne({ email });
 
-    if (!userFound)
+    if (!userFound) {
+      console.log("The email does not exist");
       return res.status(400).json({ message: ["The email does not exist"] });
+    }
 
     const isMatch = await bcrypt.compare(password, userFound.password);
     if (!isMatch) {
+      console.log("The password is incorrect");
       return res.status(400).json({ message: ["The password is incorrect"] });
     }
 
@@ -48,6 +52,7 @@ export const login = async (req, res) => {
       id: userFound._id,
       username: userFound.username,
       email: userFound.email,
+      token: token,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
