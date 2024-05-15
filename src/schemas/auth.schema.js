@@ -4,6 +4,9 @@ export const registerSchema = {
       if (!value) {
         return "Username is required";
       }
+      if (typeof value!== "string") {
+        return "Username must be a string";
+      }
       return null;
     },
   },
@@ -16,6 +19,9 @@ export const registerSchema = {
       if (!emailRegex.test(value)) {
         return "Email is not valid";
       }
+      if (typeof value!== "string") {
+        return "Username must be a string";
+      }
       return null;
     },
   },
@@ -23,6 +29,9 @@ export const registerSchema = {
     validate: (value) => {
       if (!value) {
         return "Password is required";
+      }
+      if (typeof value!== "string") {
+        return "Username must be a string";
       }
       if (value.length < 6) {
         return "Password must be at least 6 characters";
@@ -42,6 +51,9 @@ export const loginSchema = {
         if (!emailRegex.test(value)) {
           return "Email is not valid";
         }
+        if (typeof value!== "string") {
+          return "Username must be a string";
+        }
         return null;
       }
     },
@@ -49,6 +61,9 @@ export const loginSchema = {
       validate: (value) => {
         if (!value) {
           return "Password is required";
+        }
+        if (typeof value!== "string") {
+          return "Username must be a string";
         }
         if (value.length < 6) {
           return "Password must be at least 6 characters";
