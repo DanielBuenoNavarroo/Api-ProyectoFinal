@@ -1,6 +1,3 @@
-import mongoose from "mongoose";
-import userModel from "../api/models/user.model.js";
-
 export const validateSchema = (schema) => (req, res, next) => {
   const errors = [];
   try {

@@ -12,8 +12,15 @@ import {
   postScore,
   updateScore,
   deleteScore,
-  getTopScores
+  getTopScores,
 } from "../controllers/score.controller.js";
+
+import {
+  deleteNew,
+  getNew,
+  getNews,
+  postNews,
+} from "../controllers/news.controller.js";
 
 import { authAutenticator } from "../../middlewares/validateToken.js";
 
@@ -29,5 +36,10 @@ router.post("/scores/:trackId", authAutenticator, postScore);
 router.put("/scores/:trackId", authAutenticator, updateScore);
 router.delete("/scores/:trackId", authAutenticator, deleteScore);
 router.get("/scores/topscores/:trackId", getTopScores);
+
+router.post("/news/:leng", authAutenticator, postNews);
+router.get("/news/:leng/:page", getNews);
+router.get("/news/:id", getNew);
+router.delete("/news/:id", authAutenticator, deleteNew);
 
 export default router;

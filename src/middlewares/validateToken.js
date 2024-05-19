@@ -1,10 +1,9 @@
 import jwt from "jsonwebtoken";
-import { TOKEN_SECRET } from "../config.js";
+import { tokenS } from "../config.js";
 
 export const authAutenticator = (req, res, next) => {
   try {
     const { token } = req.cookies;
-    console.log(req.cookies);
 
     if (!token) {
       console.log("No token, authorization denied");
@@ -13,7 +12,7 @@ export const authAutenticator = (req, res, next) => {
         .json({ message: "No token, authorization denied" });
     }
 
-    jwt.verify(token, TOKEN_SECRET, (error, user) => {
+    jwt.verify(token, tokenS, (error, user) => {
       if (error) {
         console.log("Token is not valid");
         return res.status(401).json({ message: "Token is not valid" });
@@ -38,7 +37,7 @@ export const authAutenticatorUnreal = (req, res, next) => {
         .json({ message: "No token, authorization denied" });
     }
 
-    jwt.verify(token, TOKEN_SECRET, (error, user) => {
+    jwt.verify(token, tokenS, (error, user) => {
       if (error) {
         console.log("Token is not valid");
         return res.status(401).json({ message: "Token is not valid" });
