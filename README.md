@@ -1,5 +1,10 @@
 # API REST WITH NODE.JS
 
+## Requirements
+mongodb database
+
+[mongo db](https://www.mongodb.com/try/download/community)
+
 ## Project setup
 
 ```
