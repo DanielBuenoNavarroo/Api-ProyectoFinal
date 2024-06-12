@@ -23,8 +23,12 @@ export const getNews = async (req, res) => {
   try {
     const page = req.params.page || 1;
     const limit = 5;
-    const skip = (page -1) * limit;
-    const news = await newsModel.find().sort({ createdAt: -1 }).skip(skip).limit(5);
+    const skip = (page - 1) * limit;
+    const news = await newsModel
+      .find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
     res.status(200).json(news);
   } catch (error) {
     console.error(error);

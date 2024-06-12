@@ -15,11 +15,44 @@ export const getScores = async (req, res) => {
   }
 };
 
+export const getScore = async (req, res) => {
+  try {
+    const score = await scoreModel.findOne({
+      user: req.params.id,
+      track: req.params.trackId,
+    });
+    if (!score) {
+      return res.status(404).json({ message: "Score not found" });
+    }
+    res.status(200).json(score);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching score" });
+  }
+};
+
+export const getUserPosition = async (req, res) => {
+  try {
+    const trackId = req.params.trackId;
+    const userId = req.params.id;
+    const scores = await scoreModel.find({ track: trackId }).sort({ score: 1 });
+    const userScoreIndex = scores.findIndex(score => score.user.toString() === userId);
+    if (userScoreIndex === -1) {
+      return res.status(404).json({ message: "User score not found" });
+    }
+    const userPosition = userScoreIndex + 1;
+    res.status(200).json({ position: userPosition });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error retrieving user position" });
+  }
+};
+
 export const postScore = async (req, res) => {
   try {
     const { score } = req.body;
     const newScore = new scoreModel({
-      user: req.user.id,
+      user: req.params.id,
       track: req.params.trackId,
       score,
     });
@@ -35,7 +68,7 @@ export const updateScore = async (req, res) => {
   try {
     const { score } = req.body;
     const updatedScore = await scoreModel.findOneAndUpdate(
-      { user: req.user.id, track: req.params.trackId },
+      { user: req.params.id, track: req.params.trackId },
       { score },
       { new: true }
     );

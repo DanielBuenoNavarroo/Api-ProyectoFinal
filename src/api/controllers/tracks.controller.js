@@ -2,8 +2,20 @@ import trackModel from "../models/track.model.js";
 
 export const getTracks = async (req, res) => {
   try {
-    const tracks = await trackModel.find().populate("author");
-    res.status(200).json(tracks);
+    const page = req.params.page || 1;
+    const limit = 9;
+    const skip = (page - 1) * limit;
+    const tracks = await trackModel
+      .find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .select("-content")
+      .populate({
+        path: 'author',
+        select: 'username'
+      });
+    res.status(200).json({ tracks });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error fetching tracks" });
@@ -12,7 +24,10 @@ export const getTracks = async (req, res) => {
 
 export const getTrack = async (req, res) => {
   try {
-    const track = await trackModel.findById(req.params.id).populate("author");
+    const track = await trackModel.findById(req.params.id).populate({
+      path: 'author',
+      select: 'username'
+    });
     if (!track) {
       return res.status(404).json({ message: "Track not found" });
     }
@@ -38,8 +53,14 @@ export const deleteTrack = async (req, res) => {
 
 export const postTrack = async (req, res) => {
   try {
-    const { name, length } = req.body;
-    const newTrack = new trackModel({ name, length, author: req.user.id });
+    const { name, content } = req.body;
+    const id = req.params.id;
+    console.log(req.body);
+    const newTrack = new trackModel({
+      name: name,
+      content: content,
+      author: id,
+    });
     const savedTrack = await newTrack.save();
     res.status(201).json(savedTrack);
   } catch (error) {

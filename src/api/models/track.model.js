@@ -7,21 +7,16 @@ const trackSchema = new mongoose.Schema({
     trim: true,
     unique: true,
   },
-  length: {
-    type: Number,
-    required: true,
-    validate: {
-      validator: function(value) {
-        return !isNaN(value);
-      },
-      message: 'El campo "length" debe ser un número válido'
-    }
-  },
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
+    unique: false,
   },
+  content: {
+    type: Object,
+    required: true,
+  }
 }, {
     timestamps: true,
 });
