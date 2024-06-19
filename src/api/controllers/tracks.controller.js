@@ -12,8 +12,8 @@ export const getTracks = async (req, res) => {
       .limit(limit)
       .select("-content")
       .populate({
-        path: 'author',
-        select: 'username'
+        path: "author",
+        select: "username",
       });
     res.status(200).json({ tracks });
   } catch (error) {
@@ -22,11 +22,33 @@ export const getTracks = async (req, res) => {
   }
 };
 
+export const getUserTracks = async (req, res) => {
+  try {
+    const page = req.params.page || 1;
+    const limit = 9;
+    const skip = (page - 1) * limit;
+    const tracks = await trackModel
+      .find({ author: req.params.id })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .select("-content")
+      .populate({
+        path: "author",
+        select: "username",
+      });
+    res.status(200).json({ tracks });
+  } catch {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching tracks" });
+  }
+};
+
 export const getTrack = async (req, res) => {
   try {
     const track = await trackModel.findById(req.params.id).populate({
-      path: 'author',
-      select: 'username'
+      path: "author",
+      select: "username",
     });
     if (!track) {
       return res.status(404).json({ message: "Track not found" });

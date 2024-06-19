@@ -7,11 +7,36 @@ export const getScores = async (req, res) => {
         track: req.params.trackId,
       })
       .populate("user")
-      .populate("track");
+      .populate({
+        path: "track",
+        select: "-content",
+      });
     res.status(200).json(scores);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error fetching scores" });
+  }
+};
+
+export const getTopScores = async (req, res) => {
+  try {
+    const scores = await scoreModel
+      .find({
+        track: req.params.trackId,
+      })
+      .sort({
+        score: 1,
+      })
+      .select("_id score user createdAt")
+      .populate({
+        path: "user",
+        select: "username",
+      })
+      .limit(5);
+    res.status(200).json(scores);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching score" });
   }
 };
 
@@ -36,7 +61,9 @@ export const getUserPosition = async (req, res) => {
     const trackId = req.params.trackId;
     const userId = req.params.id;
     const scores = await scoreModel.find({ track: trackId }).sort({ score: 1 });
-    const userScoreIndex = scores.findIndex(score => score.user.toString() === userId);
+    const userScoreIndex = scores.findIndex(
+      (score) => score.user.toString() === userId
+    );
     if (userScoreIndex === -1) {
       return res.status(404).json({ message: "User score not found" });
     }
@@ -92,22 +119,5 @@ export const deleteScore = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error deleting score" });
-  }
-};
-
-export const getTopScores = async (req, res) => {
-  try {
-    const topScores = await scoreModel
-      .find({
-        track: req.params.trackId,
-      })
-      .sort({ score: 1 })
-      .limit(10)
-      .populate("user")
-      .populate("track");
-    res.status(200).json(topScores);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error fetching top scores" });
   }
 };

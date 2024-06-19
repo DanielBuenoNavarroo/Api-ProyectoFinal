@@ -10,16 +10,16 @@ export const register = async (req, res) => {
 
     if (emailExists)
       return res.status(400).json({
-        message: ["The email is already in use"],
+        errors: ["The email is already in use"],
       });
-    
+
     const usernameExists = await User.findOne({ username });
 
     if (usernameExists)
       return res.status(400).json({
-        message: ["The username is already in use"],
+        errors: ["The username is already in use"],
       });
-    
+
     const hash = await bcrypt.hash(password, 10);
 
     const newUser = new User({ username, email, password: hash });
@@ -41,19 +41,16 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
-  console.log(req.body);
 
   try {
     const userFound = await User.findOne({ email });
 
     if (!userFound) {
-      console.log("The email does not exist");
       return res.status(400).json({ message: ["The email does not exist"] });
     }
 
     const isMatch = await bcrypt.compare(password, userFound.password);
     if (!isMatch) {
-      console.log("The password is incorrect");
       return res.status(400).json({ message: ["The password is incorrect"] });
     }
 
@@ -102,4 +99,4 @@ export const validate = async (req, res) => {
     username: userFound.username,
     email: userFound.email,
   });
-}
+};
